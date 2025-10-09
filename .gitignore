@@ -1,6 +1,6 @@
 # Prerequisites
 *.d
-
+/x64
 # Compiled Object files
 *.slo
 *.lo
@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+
