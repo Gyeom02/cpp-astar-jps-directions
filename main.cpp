@@ -35,6 +35,36 @@ int numofObstac = 0;
 pair<int, int> startPos = { 0, 0 };
 pair<int, int> goalPos;
 
+const char START = 'S';
+const char WALL = '#';
+const char EMPTY = '.';
+const char GOAL = 'X';
+const char ROAD = '*';
+
+ char curPrintedChar;
+
+WORD originalAttrs;
+WORD curAttrs;
+
+HANDLE hConsole;
+//유틸//
+void SetCursorVisible(bool bvisible)
+{
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO info;
+    GetConsoleCursorInfo(h, &info);
+    info.bVisible = bvisible ?  TRUE : FALSE;
+    SetConsoleCursorInfo(h, &info);
+}
+
+void FreezeCursorPos()
+{
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    //GetConsoleScreenBufferInfo(h, &info);
+    COORD pos = { (SHORT)0, (SHORT)0};
+    SetConsoleCursorPosition(h, pos);
+}
 struct Node
 {
     int r, c;
@@ -50,7 +80,7 @@ struct PairHash //unordered_map의 해쉬함수를 위해 필요한 함수객체
     size_t operator () (const pair<int, int>& p) const noexcept { return hash<int>()(p.first) ^ (hash<int>()(p.second) << 1); }
 };
 
-vector<vector<char>> grid(ROWS, vector<char>(COLS, '.'));
+vector<vector<char>> grid(ROWS, vector<char>(COLS, EMPTY));
 
 
 
@@ -113,7 +143,7 @@ vector<pair<int, int>> astar(pair<int, int> start, pair<int, int> goal)
 
             if (nr < 0 || nc < 0 || nr >= ROWS || nc >= COLS)
                 continue;
-            if (grid[nr][nc] == '#') // 해당 노드가 벽이다
+            if (grid[nr][nc] == WALL) // 해당 노드가 벽이다
                 continue;
             float tentative_g = g_score[curPos] + 1.0f;
             if (!g_score.count(neighbor) || g_score[neighbor] > tentative_g)
@@ -136,7 +166,7 @@ vector<pair<int, int>> astar(pair<int, int> start, pair<int, int> goal)
 
                 if (nr < 0 || nc < 0 || nr >= ROWS || nc >= COLS)
                     continue;
-                if (grid[nr][nc] == '#') // 해당 노드가 벽이다
+                if (grid[nr][nc] == WALL) // 해당 노드가 벽이다
                     continue;
                 float tentative_g = g_score[curPos] + 1.4f;
                 if (!g_score.count(neighbor) || g_score[neighbor] > tentative_g)
@@ -153,41 +183,88 @@ vector<pair<int, int>> astar(pair<int, int> start, pair<int, int> goal)
 
     return {};
 }
-
-void printGrid()
+void SetPrintColor(char c)
 {
+    if (c == curPrintedChar)
+        return;
+
+    if (c == EMPTY)
+    {
+        SetConsoleTextAttribute(hConsole, originalAttrs);
+        curPrintedChar = c;
+    }
+    else if (c == ROAD)
+    {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+        curPrintedChar = c;
+    }
+    else if (c == WALL)
+    {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+        curPrintedChar = c;
+    }
+    else if (c == START)
+    {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
+        curPrintedChar = c;
+
+    }
+    else if (c == GOAL)
+    {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+        curPrintedChar = c;
+    }
+    else
+    {
+        SetConsoleTextAttribute(hConsole, originalAttrs);
+        curPrintedChar = c;
+    }
+    
+}
+void printGrid(bool bFreeze = false)
+{
+    if(bFreeze)
+        FreezeCursorPos();
     cout << "  ";
     for (int i = 0; i < COLS; ++i)
-        cout << "  " << i;
+    {
+        if(i < 10)
+            cout << "  " << i << " ";
+        else
+            cout << "  " << i;
+    }
     cout << endl;
     for (int r = 0; r < ROWS; ++r)
     {
-        cout << r << "  | ";
+        cout << r << "   ";
         for (int c = 0; c < COLS; ++c)
         {
+            SetPrintColor(grid[r][c]);
             cout << grid[r][c] << "   ";
         }
         cout << endl << endl;
     }
+    SetPrintColor(';');
 }
 
 void printDirections(const vector<pair<int,int>>& _paths, const int waittime = 50)
 {
+    
 
-        for (auto& path : _paths)
+    for (auto& path : _paths)
+    {
+        if (waittime > 0)
+            this_thread::sleep_for(chrono::milliseconds(waittime));
+        if (path.first != goalPos.first || path.second != goalPos.second)
         {
-            if (waittime > 0)
-                this_thread::sleep_for(chrono::milliseconds(waittime));
-            if (path.first != goalPos.first || path.second != goalPos.second)
-            {
-                grid[path.first][path.second] = '*';
-            }
+            grid[path.first][path.second] = ROAD;
+        }
             
-            system("cls");
-            printGrid();
+        
+        printGrid(true);
 
             
-        }
+    }
 
        
 }
@@ -234,52 +311,59 @@ void MakeObstacle()
         if (num == 1) // Row 세로 장애물
         {
             howlong = rand() % ROWS;
-            start = start_R - (howlong / 2);
-            end = start_R + (howlong / 2);
+            start = start_R - (howlong / 4);
+            end = start_R + (howlong / 4);
             if (start < 0)
                 start = 0;
             if (end >= ROWS)
                 end = ROWS - 1;
             for (int i = start; i <= end; i++)
-                grid[i][start_C] = '#';
+                grid[i][start_C] = WALL;
         }
         else // Cols 가로 장애물
         {
 
             howlong = rand() % COLS;
-            start = start_C - (howlong / 2);
-            end = start_C + (howlong / 2);
+            start = start_C - (howlong / 4);
+            end = start_C + (howlong / 4);
             if (start < 0)
                 start = 0;
             if (end >= COLS)
                 end = COLS - 1;
             for (int i = start; i <= end; i++)
-                grid[start_R][i] = '#';
+                grid[start_R][i] = WALL;
         }
     }
 }
 int main()
 {
 
-  
+    system("cls");
+    SetCursorVisible(false);
+
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    originalAttrs = consoleInfo.wAttributes;
+
     while (true)
     {
        
         cout << "A* 알고리즘 기반 길찾기 프로그램 (C++11 이상)" << endl <<
             "--------------------------------------------" << endl <<
             "  표시 기호 :" << endl <<
-            "-'S' : 시작 위치" << endl <<
-            "- '#' : 장애물(통과 불가)" << endl <<
-            "- '.' : 빈 공간" << endl <<
-            "- '*' : 이동 경로" << endl <<
-            "- 'X' : 목표 지점" << endl <<
+            "- '" << START<<"' : 시작 위치" << endl <<
+            "- '" << WALL << "' : 장애물(통과 불가)" << endl <<
+            "- '" << EMPTY << "' : 빈 공간" << endl <<
+            "- '" << ROAD << "' : 이동 경로" << endl <<
+            "- '" << GOAL << "' : 목표 지점" << endl <<
             "--------------------------------------------" << endl <<
             "사용 방법 :" << endl <<
             "1. 프로그램 실행 시 초기 맵이 출력됨" << endl <<
             "2. 목표 위치(row, col)을 입력하면" << endl <<
             "A * 알고리즘이 최단 경로를 찾아 표시함" << endl << endl;
 
-        grid = vector<vector<char>>(ROWS, vector<char>(COLS, '.')); // 맵 초기화
+        grid = vector<vector<char>>(ROWS, vector<char>(COLS, EMPTY)); // 맵 초기화
 
         int staordy = 0;
         while (true)
@@ -298,10 +382,10 @@ int main()
         }
         if (bstaticObstac)
         {
-            for (int i = 5; i < 20; ++i) grid[7][i] = '#';   // 가로 벽
-            for (int i = 0; i < 10; ++i) grid[i][10] = '#';  // 세로 벽
-            for (int i = 15; i < 35; ++i) grid[13][i] = '#';   // 가로 벽
-            for (int i = 14; i < ROWS; ++i) grid[i][20] = '#';  // 세로 벽
+            for (int i = 5; i < 20; ++i) grid[7][i] = WALL;   // 가로 벽
+            for (int i = 0; i < 10; ++i) grid[i][10] = WALL;  // 세로 벽
+            for (int i = 15; i < 35; ++i) grid[13][i] = WALL;   // 가로 벽
+            for (int i = 14; i < ROWS; ++i) grid[i][20] = WALL;  // 세로 벽
         }
         else
         {
@@ -362,14 +446,14 @@ int main()
                 HandleDismatchInput();
                 continue;
             }
-            if (grid[startPos.first][startPos.second] == '#') {
+            if (grid[startPos.first][startPos.second] == WALL) {
                 cout << "해당 좌표는 벽입니다.\n";
                 HandleDismatchInput();
                 continue;
             }
             else
             {
-                grid[startPos.first][startPos.second] = 'S';
+                grid[startPos.first][startPos.second] = START;
                 break;
             }
         }
@@ -387,7 +471,7 @@ int main()
                 HandleDismatchInput();
                 continue;
             }
-            if (grid[goalPos.first][goalPos.second] == '#') {
+            if (grid[goalPos.first][goalPos.second] == WALL) {
                 cout << "목표가 벽입니다.\n";
                 HandleDismatchInput();
                 continue;
@@ -406,7 +490,7 @@ int main()
             goto RETRY;
         }
        
-       grid[goalPos.first][goalPos.second] = 'X';
+       grid[goalPos.first][goalPos.second] = GOAL;
   
 
         cout << "===== 경로 표시 =====\n";
