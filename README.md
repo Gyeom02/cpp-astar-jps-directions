@@ -14,8 +14,8 @@ There are two types  'Manhattan' And 'Euclidean'. You Can Choose what you want
 
 static obstacles map
 
-<img width="1499" height="950" alt="Image" src="https://github.com/user-attachments/assets/95f3aedb-c442-487e-b7af-e352cd696200" />
 
+<img width="1916" height="1025" alt="static_map" src="https://github.com/user-attachments/assets/960bda1f-9382-40ed-8314-d74c149b3966" />
 
 
 dynamic obstacles map
@@ -26,11 +26,11 @@ dynamic obstacles map
 
 static one result
 
-<img width="1500" height="938" alt="Image" src="https://github.com/user-attachments/assets/f4969f3d-276d-4707-bfab-5c80bff2cb1f" />
+<img width="1916" height="1021" alt="static_result" src="https://github.com/user-attachments/assets/bcce55d9-ff69-4941-be8b-d38de3681002" />
 
 
 
 dynamic one result
 
-<img width="1505" height="970" alt="Image" src="https://github.com/user-attachments/assets/c1e8f3bc-ef64-4341-9edc-eb1e49e64e67" />
+<img width="1913" height="1019" alt="dynamic_result" src="https://github.com/user-attachments/assets/268e8ae7-44ab-4131-95b1-43eb023cf900" />
 
