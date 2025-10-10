@@ -18,15 +18,21 @@ static obstacles map
 <img width="1916" height="1025" alt="static_map" src="https://github.com/user-attachments/assets/960bda1f-9382-40ed-8314-d74c149b3966" />
 
 
-dynamic obstacles map
-
-<img width="1498" height="987" alt="Image" src="https://github.com/user-attachments/assets/e6c877a8-b7e9-41ad-8211-4524d87ce0bf" />
-
 
 
 static one result
 
 <img width="1916" height="1021" alt="static_result" src="https://github.com/user-attachments/assets/bcce55d9-ff69-4941-be8b-d38de3681002" />
+
+
+
+
+
+
+dynamic obstacles map
+
+<img width="1498" height="987" alt="Image" src="https://github.com/user-attachments/assets/e6c877a8-b7e9-41ad-8211-4524d87ce0bf" />
+
 
 
 
