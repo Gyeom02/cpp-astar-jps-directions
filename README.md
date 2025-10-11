@@ -1,4 +1,4 @@
-This is simple Program Showing how astar-directions works
+This is simple astar-directions simulator
 
 
 
