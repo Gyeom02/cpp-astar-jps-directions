@@ -9,6 +9,7 @@ There are two types  'Manhattan' And 'Euclidean'. You Can Choose what you want
 
 
 <img width="1105" height="614" alt="Image" src="https://github.com/user-attachments/assets/440f1d9d-cbd2-4fe5-aaf0-2868af8257e1" />
+![play_video](https://github.com/user-attachments/assets/3c0811f2-c806-4729-badf-ef965dca7982)
 
 
 
