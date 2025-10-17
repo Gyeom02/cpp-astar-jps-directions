@@ -1,4 +1,4 @@
-This is simple astar-directions simulator
+This is simple astar & jps algorithm searching Path simulator
 
 
 
