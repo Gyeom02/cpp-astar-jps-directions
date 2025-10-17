@@ -1,6 +1,6 @@
 This is simple astar & jps algorithm searching Path simulator
 
-
+https://www.youtube.com/watch?v=itQ8UkfPr5E
 
 you can select static Or Dynamic Obstacles and if you select Dynamic Obs.. and also can select the num of Obstacles
 
