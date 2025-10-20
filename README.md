@@ -6,7 +6,7 @@ you can select static Or Dynamic Obstacles and if you select Dynamic Obs.. and a
 
 There are two types  'Manhattan' And 'Euclidean'. You Can Choose what you want
 
-![Uploading Compare_astar&JPS_short_ver.gif…]()
+![Compare_astar JPS_short_ver](https://github.com/user-attachments/assets/19b321be-a3be-43e2-a063-a9862082911d)
 
 
 ![play_video](https://github.com/user-attachments/assets/3c0811f2-c806-4729-badf-ef965dca7982)
